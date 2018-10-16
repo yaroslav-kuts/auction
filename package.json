@@ -18,6 +18,7 @@
   "homepage": "https://github.com/zzzonked/auctionAPI#readme",
   "dependencies": {
     "express": "^4.16.4",
-    "mongoose": "^5.3.4"
+    "mongoose": "^5.3.4",
+    "mongoose-unique-validator": "^2.0.2"
   }
 }

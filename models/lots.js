@@ -1,4 +1,4 @@
-var mongoose = require('./db');
+const mongoose = require('./db');
 
 const lotSchema = new mongoose.Schema({
   title: {
