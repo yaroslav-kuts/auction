@@ -23,6 +23,7 @@ module.exports = {
         ],
         "no-param-reassign": [0],
         "no-shadow": [0],
+        "no-console": [0],
         "class-methods-use-this": [0],
         "prefer-destructuring": [0],
         "no-underscore-dangle": [0],
