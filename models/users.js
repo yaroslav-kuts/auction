@@ -28,6 +28,8 @@ const userSchema = new mongoose.Schema({
   }
 });
 
+userSchema.plugin(uniqueValidator);
+
 const User = mongoose.model('User', userSchema);
 
 const create = function (user) {
