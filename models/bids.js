@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
+const Schema = require('mongoose').Schema;
 
-const bidSchema = new mongoose.Schema({
+const bidSchema = new Schema({
   createdAt: {
     type: Date,
     required: true
