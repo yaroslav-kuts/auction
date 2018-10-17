@@ -1,6 +1,8 @@
 const mongoose = require('./db');
 const uniqueValidator = require('mongoose-unique-validator');
 
+let counter = 0;
+
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
@@ -33,10 +35,16 @@ const create = function (user) {
     User.create(user, function(err, doc) {
         if (err) reject(err);
         console.log('User created!');
+        counter++;
         resolve(doc);
       }
     );
   });
 };
 
+const count = function () {
+  return counter;
+};
+
 exports.create = create;
+exports.count = count;
