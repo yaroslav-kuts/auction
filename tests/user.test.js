@@ -18,9 +18,9 @@ describe('User', function() {
 
   describe('#create()', function() {
     it('should add one new user to DB', function(done) {
-      let numOfUsers = users.count();
-      users.create(userok).then(() => {
-        assert.equal(users.count(), numOfUsers + 1, 'new user was added');
+      users.create(userok).then(async function () {
+        let numAfter = await users.count();
+        assert.equal(numAfter, 1, 'new user was added');
         done();
       });
     });

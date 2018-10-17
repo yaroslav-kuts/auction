@@ -1,4 +1,4 @@
-const mongoose = require('./db');
+const mongoose = require('mongoose');
 
 const lotSchema = new mongoose.Schema({
   title: {
@@ -69,16 +69,7 @@ const create = function (lot) {
   });
 };
 
-const truncate =  function () {
-  return new Promise((resolve, reject) => {
-    Lot.remove({}, function(err) {
-      if (err) reject(err);
-      console.log('Lot collection was cleaned!');
-      counter = 0;
-      resolve();
-    });
-  });
-};
+const truncate = async () => Lot.remove({});
 
 exports.create = create;
 exports.truncate = truncate;

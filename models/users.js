@@ -1,7 +1,6 @@
-const mongoose = require('./db');
-const uniqueValidator = require('mongoose-unique-validator');
+const mongoose = require('mongoose');
 
-let counter = 0;
+const uniqueValidator = require('mongoose-unique-validator');
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -37,27 +36,15 @@ const create = function (user) {
     User.create(user, function(err, doc) {
         if (err) reject(err);
         console.log('User created!');
-        counter++;
         resolve(doc);
       }
     );
   });
 };
 
-const truncate =  function () {
-  return new Promise((resolve, reject) => {
-    User.remove({}, function(err) {
-      if (err) reject(err);
-      console.log('Users collection was cleaned!');
-      counter = 0;
-      resolve();
-    });
-  });
-};
+const truncate = async () => User.remove({});
 
-const count = function () {
-  return counter;
-};
+const count = () => User.count({}).exec();
 
 exports.create = create;
 exports.count = count;
