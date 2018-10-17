@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha ./tests/*",
-    "autofix": "./node_modules/.bin/eslint --fix ./models/** app.js"
+    "lint": "./node_modules/.bin/eslint .",
+    "autofix": "./node_modules/.bin/eslint --fix ."
   },
   "repository": {
     "type": "git",
