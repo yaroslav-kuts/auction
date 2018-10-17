@@ -23,6 +23,11 @@
     "mongoose-unique-validator": "^2.0.2"
   },
   "devDependencies": {
-    "eslint": "^5.7.0"
+    "chai": "^4.2.0",
+    "eslint": "^5.7.0",
+    "factory-girl": "^5.0.2",
+    "faker": "^4.1.0",
+    "mocha": "^5.2.0",
+    "nyc": "^13.1.0"
   }
 }
