@@ -34,4 +34,16 @@ const create = function (bid) {
   });
 };
 
+const truncate =  function () {
+  return new Promise((resolve, reject) => {
+    Bid.remove({}, function(err) {
+      if (err) reject(err);
+      console.log('Bid collection was cleaned!');
+      counter = 0;
+      resolve();
+    });
+  });
+};
+
+exports.truncate = truncate;
 exports.create = create;

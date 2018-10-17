@@ -44,9 +44,21 @@ const create = function (user) {
   });
 };
 
+const truncate =  function () {
+  return new Promise((resolve, reject) => {
+    User.remove({}, function(err) {
+      if (err) reject(err);
+      console.log('Users collection was cleaned!');
+      counter = 0;
+      resolve();
+    });
+  });
+};
+
 const count = function () {
   return counter;
 };
 
 exports.create = create;
 exports.count = count;
+exports.truncate = truncate;

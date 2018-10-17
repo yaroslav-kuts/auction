@@ -69,4 +69,16 @@ const create = function (lot) {
   });
 };
 
+const truncate =  function () {
+  return new Promise((resolve, reject) => {
+    Lot.remove({}, function(err) {
+      if (err) reject(err);
+      console.log('Lot collection was cleaned!');
+      counter = 0;
+      resolve();
+    });
+  });
+};
+
 exports.create = create;
+exports.truncate = truncate;
