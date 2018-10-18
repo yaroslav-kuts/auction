@@ -68,9 +68,16 @@ const activateUser = function(email, callback) {
   User.update({ email: email }, {$set : { activated: true }}, function (err) {
     callback(err, email);
   });
-}
+};
+
+const findOne = function (email, callback) {
+  User.findOne({ email: email }, function (err, user) {
+    callback(err, user);
+  });
+};
 
 exports.create = create;
 exports.count = count;
 exports.truncate = truncate;
 exports.activateUser = activateUser;
+exports.findOne = findOne;

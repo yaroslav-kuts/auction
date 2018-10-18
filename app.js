@@ -4,6 +4,10 @@ const db = require('./models/db');
 const users = require('./models/users');
 const mailer = require('./helpers/mailer');
 
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const bcrypt = require('bcrypt');
+
 const app = express();
 
 const close = (err, onclose) => {
@@ -13,8 +17,26 @@ const close = (err, onclose) => {
   process.exit();
 };
 
+passport.use(new LocalStrategy({
+    usernameField: 'email',
+    passwordField: 'password'
+  },
+  function(username, password, done) {
+    users.findOne(username, function (err, user) {
+      if (err) { return done(err); }
+
+      if (!user) return done(null, false);
+      if (!user.activated) return done(null, false);
+      if (!bcrypt.compareSync(password, user.password)) return done(null, false);
+      
+      return done(null, user);
+    });
+  }
+));
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(passport.initialize());
 
 app.get('/api/healthcheck', function (req, res) {
   res.status(200);
@@ -49,6 +71,12 @@ app.post('/api/signup', function (req, res) {
   res.status(200);
   res.json(req.body);
 });
+
+app.post('/api/login',
+  passport.authenticate('local', { session: false }),
+  function(req, res) {
+    res.json({ authenticated: 'true'});
+  });
 
 app.listen(3001, function () {
   console.log('Auction app listening on port 3001!');
