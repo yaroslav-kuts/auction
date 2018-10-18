@@ -1,9 +1,19 @@
 const mongoose = require('mongoose');
 const Schema = require('mongoose').Schema;
+const bcrypt = require('bcrypt');
 
 const uniqueValidator = require('mongoose-unique-validator');
 
 const userSchema = new Schema({
+  username: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  password: {
+    type: String,
+    required: true,
+  },
   email: {
     type: String,
     required: true,
@@ -33,6 +43,9 @@ userSchema.plugin(uniqueValidator);
 const User = mongoose.model('User', userSchema);
 
 const create = function (user) {
+
+  user.password = bcrypt.hashSync(user.password, 10);
+
   return new Promise((resolve, reject) => {
     User.create(user, function(err, doc) {
         if (err) reject(err);

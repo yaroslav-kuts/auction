@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require("body-parser");
 const db = require('./models/db');
+const users = require('./models/users');
 
 const app = express();
 
@@ -22,6 +23,8 @@ app.get('/api/healthcheck', function (req, res) {
 });
 
 app.post('/api/signup', function (req, res) {
+  //TODO: add body validation
+  users.create(req.body);
   res.json(req.body);
 });
 
