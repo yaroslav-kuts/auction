@@ -14,6 +14,10 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  activated: {
+    type: Boolean,
+    default: true
+  },
   email: {
     type: String,
     required: true,
@@ -60,6 +64,13 @@ const truncate = async () => User.remove({});
 
 const count = () => User.count({}).exec();
 
+const activateUser = function(email, callback) {
+  User.update({ email: email }, {$set : { activated: true }}, function (err) {
+    callback(err, email);
+  });
+}
+
 exports.create = create;
 exports.count = count;
 exports.truncate = truncate;
+exports.activateUser = activateUser;

@@ -23,8 +23,15 @@ app.get('/api/healthcheck', function (req, res) {
 
 app.get('/api/confirm/:email', function (req, res) {
   const email = req.params.email;
-  res.status(200);
-  res.json({ message: `${email} was activated!` });
+  users.activateUser(email, (err, email) => {
+    if (err) {
+      console.log(err);
+      res.status(500);
+      res.json({ message: 'Error during user account confirmation!' });
+    }
+    res.status(200);
+    res.json({ message: `${email} was activated!` });
+  });
 });
 
 app.post('/api/signup', function (req, res) {
