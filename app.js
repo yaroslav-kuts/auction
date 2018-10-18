@@ -9,6 +9,10 @@ const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcrypt');
 
 const jwt = require('jsonwebtoken');
+const JwtStrategy = require('passport-jwt').Strategy; // Auth via JWT
+const ExtractJwt = require('passport-jwt').ExtractJwt;
+
+const jwtsecret = 'mysecret';
 
 const app = express();
 
@@ -35,6 +39,27 @@ passport.use(new LocalStrategy({
     });
   }
 ));
+
+
+const jwtOptions = {
+  jwtFromRequest: ExtractJwt.fromHeader('auth'),
+  secretOrKey: jwtsecret
+};
+
+passport.use(new JwtStrategy(jwtOptions, function (payload, done) {
+    console.log(payload.email);
+    users.findOne(payload.email, (err, user) => {
+      if (err) {
+        return done(err)
+      }
+      if (user) {
+        done(null, user)
+      } else {
+        done(null, false)
+      }
+    })
+  })
+);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -86,8 +111,6 @@ app.post('/api/login', function(req, res, next) {
       res.json({ status: 'Unauthorized' });
     }
     else {
-      const jwtsecret = 'mysecret';
-
       const payload = {
         id: user._id,
         email: user.email
@@ -97,6 +120,12 @@ app.post('/api/login', function(req, res, next) {
     }
   })(req, res, next);
 });
+
+app.post('/api/user', passport.authenticate('jwt', { session: false }),
+    function(req, res) {
+        res.json({ user: "test" });
+    }
+);
 
 app.listen(3001, function () {
   console.log('Auction app listening on port 3001!');
