@@ -23,7 +23,8 @@
     "bcrypt": "^3.0.2",
     "express": "^4.16.4",
     "mongoose": "^5.3.4",
-    "mongoose-unique-validator": "^2.0.2"
+    "mongoose-unique-validator": "^2.0.2",
+    "nodemailer": "^4.6.8"
   },
   "devDependencies": {
     "chai": "^4.2.0",
