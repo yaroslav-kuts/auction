@@ -8,6 +8,8 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcrypt');
 
+const jwt = require('jsonwebtoken');
+
 const app = express();
 
 const close = (err, onclose) => {
@@ -28,7 +30,7 @@ passport.use(new LocalStrategy({
       if (!user) return done(null, false);
       if (!user.activated) return done(null, false);
       if (!bcrypt.compareSync(password, user.password)) return done(null, false);
-      
+
       return done(null, user);
     });
   }
@@ -72,11 +74,29 @@ app.post('/api/signup', function (req, res) {
   res.json(req.body);
 });
 
-app.post('/api/login',
-  passport.authenticate('local', { session: false }),
-  function(req, res) {
-    res.json({ authenticated: 'true'});
-  });
+
+app.post('/api/login', function(req, res, next) {
+  passport.authenticate('local', function(err, user, info) {
+    if (err) {
+      res.status(401);
+      res.json({ status: 'Unauthorized' });
+    }
+    if (!user) {
+      res.status(401);
+      res.json({ status: 'Unauthorized' });
+    }
+    else {
+      const jwtsecret = 'mysecret';
+
+      const payload = {
+        id: user._id,
+        email: user.email
+      };
+      const token = jwt.sign(payload, jwtsecret);
+      res.json({ user: user.email, token: `JWT ${token}`});
+    }
+  })(req, res, next);
+});
 
 app.listen(3001, function () {
   console.log('Auction app listening on port 3001!');
