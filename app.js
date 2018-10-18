@@ -1,4 +1,5 @@
 const express = require('express');
+const bodyParser = require("body-parser");
 const db = require('./models/db');
 
 const app = express();
@@ -10,9 +11,18 @@ const close = (err, onclose) => {
   process.exit();
 };
 
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// parse application/json
+app.use(bodyParser.json());
+
 app.get('/api/healthcheck', function (req, res) {
   res.status(200);
   res.json({ status: 'OK' });
+});
+
+app.post('/api/signup', function (req, res) {
+  res.json(req.body);
 });
 
 app.listen(3001, function () {
