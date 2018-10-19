@@ -36,7 +36,7 @@ const signup = function (req, res) {
     from: `zndtestdev@gmail.com`,
     to: user.email,
     subject: `Auction Marketplace: Signup confirmation!`,
-    html: `<p>To confirm registration follow the link: <a href="http://localhost:3001/api/confirm/${req.body.email}">confirmation</a></p>`
+    html: `<p>To confirm registration follow the link: <a href="http://localhost:3001/api/user/confirm/${req.body.email}">confirmation</a></p>`
   };
 
   mailer.send(email);
@@ -59,17 +59,25 @@ const login = function(req, res, next) {
         id: user._id,
         email: user.email
       };
-      const token = jwt.sign(payload, jwtsecret);
+      const token = jwt.sign(payload, jwtsecret, { expiresIn: '2h' });
       res.json({ user: user.email, token: `JWT ${token}`});
     }
   })(req, res, next);
 };
 
-const user = function(req, res) {
-    res.json({ user: "test" });
+const checkauth = function(req, res) {
+  try {
+    var decoded = jwt.verify(req.get('auth'), jwtsecret);
+  } catch (err) {
+    res.json({ error: err});
+  }
+  res.json({ id: decoded.id,
+             email: decoded.email,
+             expiration: new Date(decoded.exp * 1000),
+             isValid: decoded.exp > Date.now() / 1000 });
 };
 
 exports.confirm = confirm;
 exports.signup = signup;
 exports.login = login;
-exports.user = user;
+exports.checkauth = checkauth;
