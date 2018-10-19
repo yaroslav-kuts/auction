@@ -1,8 +1,7 @@
 const express = require('express');
 
 const db = require('./models/db');
-const users = require('./models/users');
-const mailer = require('./helpers/mailer');
+const User = require('./models/user');
 
 const userRoutes = require('./routes/user.js');
 
@@ -30,13 +29,11 @@ passport.use(new LocalStrategy({
     passwordField: 'password'
   },
   function(username, password, done) {
-    users.findOne(username, function (err, user) {
+    User.findOne({ email: username }, function (err, user) {
       if (err) { return done(err); }
-
       if (!user) return done(null, false);
       if (!user.activated) return done(null, false);
       if (!bcrypt.compareSync(password, user.password)) return done(null, false);
-
       return done(null, user);
     });
   }
@@ -49,20 +46,13 @@ const jwtOptions = {
 };
 
 passport.use(new JwtStrategy(jwtOptions, function (payload, done) {
-    console.log(payload.email);
-    users.findOne(payload.email, (err, user) => {
-      if (err) {
-        return done(err)
-      }
-      if (user) {
-        done(null, user)
-      } else {
-        done(null, false)
-      }
-    })
+    User.findOne({ email: payload.email }, (err, user) => {
+      if (err) return done(err);
+      if (user) done(null, user);
+      else done(null, false);
+    });
   })
 );
-
 
 app.use(passport.initialize());
 
@@ -79,6 +69,6 @@ app.listen(3001, function () {
 
 process.on('SIGINT', function() {
   close(null, () => {
-    console.log('\nProcess was interupted!');
+    console.log('Process was interupted!');
   });
 });

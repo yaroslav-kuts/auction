@@ -57,20 +57,4 @@ const lotSchema = new Schema({
   }
 });
 
-const Lot = mongoose.model('Lot', lotSchema);
-
-const create = function (lot) {
-  return new Promise((resolve, reject) => {
-    Lot.create(lot, function(err, doc) {
-        if (err) reject(err);
-        console.log('Lot created!');
-        resolve(doc);
-      }
-    );
-  });
-};
-
-const truncate = async () => Lot.remove({});
-
-exports.create = create;
-exports.truncate = truncate;
+module.exports = mongoose.model('Lot', lotSchema);

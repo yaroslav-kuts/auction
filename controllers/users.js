@@ -2,14 +2,14 @@ const passport = require('passport');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const users = require('../models/users');
+const User = require('../models/user');
 const mailer = require('../helpers/mailer');
 
 const jwtsecret = 'mysecret';
 
 const confirm = function (req, res) {
   const email = req.params.email;
-  users.activateUser(email, (err, email) => {
+  User.update({ email: email }, {$set : { activated: true }}, function (err) {
     if (err) {
       console.log(err);
       res.status(500);
@@ -24,18 +24,24 @@ const signup = function (req, res) {
   //TODO: add body validation
   console.log(req.body);
 
-  users.create(req.body);
+  const user = req.body;
+  user.password = bcrypt.hashSync(user.password, 10);
+
+  User.create(user, function(err, doc) {
+    if (err) console.log(err);
+    console.log('User created!');
+  });
 
   const email = {
     from: `zndtestdev@gmail.com`,
-    to: req.body.email,
+    to: user.email,
     subject: `Auction Marketplace: Signup confirmation!`,
     html: `<p>To confirm registration follow the link: <a href="http://localhost:3001/api/confirm/${req.body.email}">confirmation</a></p>`
   };
 
   mailer.send(email);
   res.status(200);
-  res.json(req.body);
+  res.json(user);
 };
 
 const login = function(req, res, next) {
@@ -62,7 +68,6 @@ const login = function(req, res, next) {
 const user = function(req, res) {
     res.json({ user: "test" });
 };
-
 
 exports.confirm = confirm;
 exports.signup = signup;

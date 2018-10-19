@@ -22,20 +22,4 @@ const bidSchema = new Schema({
   }
 });
 
-const Bid = mongoose.model('Bid', bidSchema);
-
-const create = function (bid) {
-  return new Promise((resolve, reject) => {
-    Bid.create(bid, function(err, doc) {
-        if (err) reject(err);
-        console.log('Bid created!');
-        resolve(doc);
-      }
-    );
-  });
-};
-
-const truncate = async () => Bid.remove({});
-
-exports.truncate = truncate;
-exports.create = create;
+module.exports = mongoose.model('Bid', bidSchema);
