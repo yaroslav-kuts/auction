@@ -60,9 +60,28 @@ const login = function(req, res, next) {
         email: user.email
       };
       const token = jwt.sign(payload, jwtsecret, { expiresIn: '2h' });
-      res.json({ user: user.email, token: `JWT ${token}`});
+      user.tokens.push(token);
+      User.update({ email: user.email }, user, function (err) {
+        if (err) res.json({ error: err });
+        res.json({ user: user.email, token: `JWT ${token}`});
+      });
     }
   })(req, res, next);
+};
+
+const logout = function (req, res, next) {
+  const token = req.get('auth');
+  const decoded = jwt.verify(token, jwtsecret);
+  User.findOne({ email: decoded.email }, function (err, user) {
+    const indexOfToken = user.tokens.indexOf(token);
+    const tokens = user.tokens.slice(0, indexOfToken).concat(user.tokens.slice(indexOfToken+1));
+    user.tokens = tokens;
+    User.update({ email: user.email }, user, function (err) {
+      if (err) res.json({ error: err });
+      res.json({ logout: 'successful' });
+    });
+  });
+
 };
 
 const checkauth = function(req, res) {
@@ -80,4 +99,5 @@ const checkauth = function(req, res) {
 exports.confirm = confirm;
 exports.signup = signup;
 exports.login = login;
+exports.logout = logout;
 exports.checkauth = checkauth;
