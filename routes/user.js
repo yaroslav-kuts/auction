@@ -12,5 +12,7 @@ router.get('/checkauth', controller.checkauth);
 router.post('/signup', controller.signup);
 router.post('/login', controller.login);
 router.post('/logout', passport.authenticate('jwt', { session: false }), controller.logout);
+router.post('/recovery', controller.recovery);
+router.post('/changepass', controller.changepass);
 
 module.exports = router;

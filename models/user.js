@@ -13,6 +13,7 @@ const userSchema = new Schema({
     default: true
   },
   tokens: Array,
+  changePassToken: String,
   email: {
     type: String,
     required: true,
