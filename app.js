@@ -48,7 +48,7 @@ const jwtOptions = {
 passport.use(new JwtStrategy(jwtOptions, function (payload, done) {
     User.findOne({ email: payload.email }, (err, user) => {
       if (err) return done(err);
-      if (user) done(null, user);
+      if (user && user.tokens.includes(payload.jti)) done(null, user);
       else done(null, false);
     });
   })

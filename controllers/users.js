@@ -1,6 +1,7 @@
 const passport = require('passport');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const uniqid = require('uniqid');
 
 const User = require('../models/user');
 const mailer = require('../helpers/mailer');
@@ -55,12 +56,15 @@ const login = function(req, res, next) {
       res.json({ status: 'Unauthorized' });
     }
     else {
+      const jti = uniqid();
+      console.log(jti);
       const payload = {
         id: user._id,
-        email: user.email
+        email: user.email,
+        jti: jti
       };
       const token = jwt.sign(payload, jwtsecret, { expiresIn: '2h' });
-      user.tokens.push(token);
+      user.tokens.push(jti);
       User.update({ email: user.email }, user, function (err) {
         if (err) res.json({ error: err });
         res.json({ user: user.email, token: `JWT ${token}`});
@@ -73,7 +77,7 @@ const logout = function (req, res, next) {
   const token = req.get('auth');
   const decoded = jwt.verify(token, jwtsecret);
   User.findOne({ email: decoded.email }, function (err, user) {
-    const indexOfToken = user.tokens.indexOf(token);
+    const indexOfToken = user.tokens.indexOf(decoded.jti);
     const tokens = user.tokens.slice(0, indexOfToken).concat(user.tokens.slice(indexOfToken+1));
     user.tokens = tokens;
     User.update({ email: user.email }, user, function (err) {
@@ -81,19 +85,23 @@ const logout = function (req, res, next) {
       res.json({ logout: 'successful' });
     });
   });
-
 };
 
 const checkauth = function(req, res) {
   try {
     var decoded = jwt.verify(req.get('auth'), jwtsecret);
+    User.findOne({ email: decoded.email }, (err, user) => {
+      if (err) res.json({ error: err });
+      let isValid = false;
+      if (user.tokens.includes(decoded.jti)) isValid = true;
+      res.json({ id: decoded.id,
+                 email: decoded.email,
+                 expiration: new Date(decoded.exp * 1000),
+                 isValid: isValid });
+    });
   } catch (err) {
     res.json({ error: err});
   }
-  res.json({ id: decoded.id,
-             email: decoded.email,
-             expiration: new Date(decoded.exp * 1000),
-             isValid: decoded.exp > Date.now() / 1000 });
 };
 
 exports.confirm = confirm;
