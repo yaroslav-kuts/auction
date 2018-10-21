@@ -9,7 +9,6 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcrypt');
 
-const jwt = require('jsonwebtoken');
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 
@@ -63,8 +62,8 @@ app.get('/api/healthcheck', function (req, res) {
 
 app.use('/api/user', userRoutes);
 
-app.listen(3001, function () {
-  console.log('Auction app listening on port 3001!');
+app.listen(3000, function () {
+  console.log('Auction app listening on port 3000!');
 });
 
 process.on('SIGINT', function() {

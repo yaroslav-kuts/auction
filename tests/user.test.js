@@ -3,7 +3,7 @@ const supertest = require('supertest');
 const User = require('../models/user');
 const app = require('../app');
 
-const server = supertest.agent("http://localhost:3001");
+const server = supertest.agent("http://localhost:3000");
 
 
 const user = { email: 'yaroslavkuts@gmail.com',
@@ -32,7 +32,6 @@ describe('/api/user', function() {
       .send(user)
       .expect(200)
       .end(function(err, res) {
-        assert.equal(res.status, 200);
         assert.equal(res.body.email, user.email);
         done();
       });
@@ -45,7 +44,6 @@ describe('/api/user', function() {
       .get(`/api/user/confirm/${user.email}`)
       .expect(200)
       .end(function(err, res) {
-        assert.equal(res.status, 200);
         assert.equal(res.body.message, `${user.email} was activated!`);
         done();
       });
@@ -59,7 +57,6 @@ describe('/api/user', function() {
       .send({ email: user.email, password: user.password })
       .expect(200)
       .end(function(err, res) {
-        assert.equal(res.status, 200);
         jwt = res.body.token.split(' ')[1];
         done();
       });
@@ -73,7 +70,6 @@ describe('/api/user', function() {
       .set({ auth: jwt })
       .expect(200)
       .end(function(err, res) {
-        assert.equal(res.status, 200);
         assert.equal(res.body.isValid, true);
         done();
       });
@@ -87,7 +83,6 @@ describe('/api/user', function() {
       .send({ email: user.email })
       .expect(200)
       .end(function(err, res) {
-        assert.equal(res.status, 200);
         changePassToken = res.body.token;
         done();
       });
@@ -103,7 +98,6 @@ describe('/api/user', function() {
               password: newpass })
       .expect(200)
       .end(function(err, res) {
-        assert.equal(res.status, 200);
         console.log();
         done();
       });
@@ -117,7 +111,6 @@ describe('/api/user', function() {
       .send({ email: user.email, password: newpass })
       .expect(200)
       .end(function(err, res) {
-        assert.equal(res.status, 200);
         jwt = res.body.token.split(' ')[1];
         done();
       });
@@ -131,7 +124,6 @@ describe('/api/user', function() {
       .set({ auth: jwt })
       .expect(200)
       .end(function(err, res) {
-        assert.equal(res.status, 200);
         assert.equal(res.body.isValid, true);
         done();
       });
@@ -145,7 +137,6 @@ describe('/api/user', function() {
       .set({ auth: jwt })
       .expect(200)
       .end(function(err, res) {
-        assert.equal(res.status, 200);
         assert.equal(res.body.message, 'Token invalid. User logged out successfully.');
         done();
       });
@@ -159,11 +150,9 @@ describe('/api/user', function() {
       .set({ auth: jwt })
       .expect(200)
       .end(function(err, res) {
-        assert.equal(res.status, 200);
         assert.equal(res.body.isValid, false);
         done();
       });
     });
   });
-
 });
