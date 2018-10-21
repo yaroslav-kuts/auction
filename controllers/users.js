@@ -91,6 +91,7 @@ const checkauth = function(req, res) {
   try {
     var decoded = jwt.verify(req.get('auth'), jwtsecret);
     User.findOne({ email: decoded.email }, (err, user) => {
+      //TODO: add appropriative status when return error
       if (err) res.json({ error: err });
       let isValid = false;
       if (user.tokens.includes(decoded.jti)) isValid = true;
@@ -108,9 +109,9 @@ const recovery = function(req, res) {
   const token = uniqid();
 
   const email = {
-    from: `zndtestdev@gmail.com`,
+    from: 'zndtestdev@gmail.com',
     to: req.body.email,
-    subject: `Auction Marketplace: password recovering!`,
+    subject: 'Auction Marketplace: password recovering!',
     html: `<p>To confirm recovering follow the link: <a href="http://localhost:3001/api/user/changepass/${token}">confirmation</a></p>`
   };
 
@@ -118,7 +119,8 @@ const recovery = function(req, res) {
     if (err) res.json({ error: err });
     mailer.send(email);
     res.status(200);
-    res.json({ message: 'Recovering email was sent.' });
+    res.json({ message: 'Recovering email was sent.',
+               token: token });
   });
 };
 
