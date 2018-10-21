@@ -7,9 +7,8 @@ const transport = nodemailer.createTransport({
 });
 
 const send = function (email) {
-  transport.sendMail(email, function(err, info){
+  transport.sendMail(email, function(err){
     if (err) console.log(err);
-    console.log(`Confirmation email was sent to ${email.to}`);
   });
 };
 

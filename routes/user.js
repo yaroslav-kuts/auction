@@ -13,6 +13,6 @@ router.post('/signup', controller.signup);
 router.post('/login', controller.login);
 router.post('/logout', passport.authenticate('jwt', { session: false }), controller.logout);
 router.post('/recovery', controller.recovery);
-router.post('/changepass', controller.changepass);
+router.post('/change/password', controller.changepass);
 
 module.exports = router;

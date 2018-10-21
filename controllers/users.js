@@ -10,7 +10,7 @@ const jwtsecret = 'mysecret';
 
 const confirm = function (req, res) {
   const email = req.params.email;
-  User.update({ email: email }, {$set : { activated: true }}, function (err) {
+  User.updateOne({ email: email }, {$set : { activated: true }}, function (err) {
     if (err) {
       console.log(err);
       res.status(500);
@@ -23,14 +23,15 @@ const confirm = function (req, res) {
 
 const signup = function (req, res) {
   //TODO: add body validation
-  console.log(req.body);
 
   const user = req.body;
   user.password = bcrypt.hashSync(user.password, 10);
 
   User.create(user, function(err, doc) {
-    if (err) console.log(err);
-    console.log('User created!');
+    if (err) {
+      res.status(500);
+      res.json({ error: err });
+    }
   });
 
   const email = {
@@ -57,7 +58,6 @@ const login = function(req, res, next) {
     }
     else {
       const jti = uniqid();
-      console.log(jti);
       const payload = {
         id: user._id,
         email: user.email,
@@ -65,7 +65,7 @@ const login = function(req, res, next) {
       };
       const token = jwt.sign(payload, jwtsecret, { expiresIn: '2h' });
       user.tokens.push(jti);
-      User.update({ email: user.email }, user, function (err) {
+      User.updateOne({ email: user.email }, user, function (err) {
         if (err) res.json({ error: err });
         res.json({ user: user.email, token: `JWT ${token}`});
       });
@@ -80,9 +80,9 @@ const logout = function (req, res, next) {
     const indexOfToken = user.tokens.indexOf(decoded.jti);
     const tokens = user.tokens.slice(0, indexOfToken).concat(user.tokens.slice(indexOfToken+1));
     user.tokens = tokens;
-    User.update({ email: user.email }, user, function (err) {
+    User.updateOne({ email: user.email }, user, function (err) {
       if (err) res.json({ error: err });
-      res.json({ logout: 'successful' });
+      res.json({ message: 'Token invalid. User logged out successfully.' });
     });
   });
 };
@@ -115,7 +115,7 @@ const recovery = function(req, res) {
     html: `<p>To confirm recovering follow the link: <a href="http://localhost:3001/api/user/changepass/${token}">confirmation</a></p>`
   };
 
-  User.update({ email: req.body.email }, {$set : { changePassToken: token }}, function (err) {
+  User.updateOne({ email: req.body.email }, {$set : { changePassToken: token }}, function (err) {
     if (err) res.json({ error: err });
     mailer.send(email);
     res.status(200);
@@ -135,7 +135,7 @@ const changepass = function(req, res) {
     else if (!user) res.json({ error: 'There is no such user.' });
     else if (user.changePassToken !== token) res.json({ error: 'Not valid token for changing password.' });
     else {
-      User.update({ email: email }, {$set : { password: password }}, function (err) {
+      User.updateOne({ email: email }, {$set : { password: password }}, function (err) {
         if (err) res.json({ error: err });
         res.json({ message: 'Password was changed.'});
       });
