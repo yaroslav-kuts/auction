@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Schema = require('mongoose').Schema;
+const Schema = mongoose.Schema;
 
 const lotSchema = new Schema({
   title: {
@@ -7,7 +7,7 @@ const lotSchema = new Schema({
     required: true
   },
   user: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.ObjectId,
     ref: 'User'
   },
   image: String,
@@ -40,13 +40,13 @@ const lotSchema = new Schema({
   },
   order: {
     customer: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.ObjectId,
       ref: 'User'
     },
     location: String,
     arrivalType: {
         type: String,
-        enum : ['pickup', 'royalMail', 'unitedStatesPostalService', 'dhlExpress'],
+        enum : ['pickup', 'royal', 'usaPostal', 'dhl'],
         default: 'pickup'
     },
     status: {

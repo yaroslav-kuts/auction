@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Schema = require('mongoose').Schema;
+const Schema = mongoose.Schema;
 
 const bidSchema = new Schema({
   createdAt: {
@@ -11,12 +11,12 @@ const bidSchema = new Schema({
     required: true
   },
   user: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.ObjectId,
     ref: 'User',
     required: true
   },
   lot: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.ObjectId,
     ref: 'Lot',
     required: true
   }

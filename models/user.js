@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
-const Schema = require('mongoose').Schema;
-const bcrypt = require('bcrypt');
+const Schema = mongoose.Schema;
 const uniqueValidator = require('mongoose-unique-validator');
 
 const userSchema = new Schema({
@@ -12,7 +11,7 @@ const userSchema = new Schema({
     type: Boolean,
     default: true
   },
-  tokens: Array,
+  tokens: [String],
   changePassToken: String,
   email: {
     type: String,
