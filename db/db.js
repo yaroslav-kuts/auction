@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const options = { poolSize: 10, useNewUrlParser: true };
 
-mongoose.connect('mongodb://localhost/auction', options);
+mongoose.connect(process.env.DB_URI, options);
 
 exports.close = (err, onclose) => {
   if (onclose) onclose();
