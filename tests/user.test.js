@@ -13,9 +13,7 @@ const user = { email: 'yaroslavkuts@gmail.com',
                lastName: 'Dou',
                birthday: '1990-10-16T09:31:44.992Z' };
 
-let jwt = undefined;
-let changePassToken = undefined;
-let newpass = 'newpass';
+let jwt, changePassToken, newpass = 'newpass';
 
 describe('/api/user', function() {
 
@@ -44,7 +42,7 @@ describe('/api/user', function() {
       .get(`/api/user/confirm/${user.email}`)
       .expect(200)
       .end(function(err, res) {
-        assert.equal(res.body.message, `${user.email} was activated!`);
+        assert.equal(res.body.message, `${user.email} was activated.`);
         done();
       });
     });
