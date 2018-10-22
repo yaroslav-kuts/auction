@@ -31,7 +31,6 @@
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
-    "pm2": "^3.2.2",
     "uniqid": "^5.0.3"
   },
   "devDependencies": {
@@ -41,6 +40,7 @@
     "faker": "^4.1.0",
     "mocha": "^5.2.0",
     "nyc": "^13.1.0",
+    "pm2": "^3.2.2",
     "supertest": "^3.3.0"
   }
 }
