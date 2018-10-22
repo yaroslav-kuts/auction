@@ -5,13 +5,14 @@ const app = require('../app');
 
 const server = supertest.agent("http://localhost:3000");
 
-
-const user = { email: 'yaroslavkuts@gmail.com',
-               password: 'testing',
-               phone: '+1-541-654-9176',
-               firstName: 'John',
-               lastName: 'Dou',
-               birthday: '1990-10-16T09:31:44.992Z' };
+const user = {
+  email: 'yaroslavkuts@gmail.com',
+  password: 'testing',
+  phone: '+1-541-654-9176',
+  firstName: 'John',
+  lastName: 'Dou',
+  birthday: '1990-10-16T09:31:44.992Z'
+};
 
 let jwt, changePassToken, newpass = 'newpass';
 
@@ -31,6 +32,98 @@ describe('/api/user', function() {
       .expect(200)
       .end(function(err, res) {
         assert.equal(res.body.email, user.email);
+        done();
+      });
+    });
+  });
+
+  describe('POST /api/user/signup', function() {
+
+    const user = {
+      email: 'yaroslavkuts@gmail.com',
+      password: 'testing',
+      phone: '+1-541-654-9176',
+      firstName: 'John',
+      lastName: 'Dou',
+      birthday: '1998-10-16T09:31:44.992Z'
+    };
+
+    it('should return status 422 Unprocessable Entity for user with age less than 21', function(done) {
+      server
+      .post('/api/user/signup')
+      .send(user)
+      .expect(422)
+      .end(function(err, res) {
+        assert.isTrue(res.body.errors.length === 1);
+        done();
+      });
+    });
+  });
+
+  describe('POST /api/user/signup', function() {
+
+    const user = {
+      email: 'yaroslavkuts@gmail.com',
+      password: 'testing',
+      phone: '+1-541-654-91',
+      firstName: 'John',
+      lastName: 'Dou',
+      birthday: '1990-10-16T09:31:44.992Z'
+    };
+
+    it('should return status 422 Unprocessable Entity for user with not valid phone', function(done) {
+      server
+      .post('/api/user/signup')
+      .send(user)
+      .expect(422)
+      .end(function(err, res) {
+        assert.isTrue(res.body.errors.length === 1);
+        done();
+      });
+    });
+  });
+
+  describe('POST /api/user/signup', function() {
+
+    const user = {
+      email: 'yaroslavkutsgmail.com',
+      password: 'testing',
+      phone: '+1-541-654-9176',
+      firstName: 'John',
+      lastName: 'Dou',
+      birthday: '1990-10-16T09:31:44.992Z'
+    };
+
+    it('should return status 422 Unprocessable Entity for user with not valid email', function(done) {
+      server
+      .post('/api/user/signup')
+      .send(user)
+      .expect(422)
+      .end(function(err, res) {
+        assert.isTrue(res.body.errors.length === 1);
+        done();
+      });
+    });
+  });
+
+  describe('POST /api/user/signup', function() {
+
+    const user = {
+      email: 'yaroslavkuts@gmail.com',
+      password: '',
+      phone: '+1-541-654-9176',
+      firstName: 'John',
+      lastName: 'Dou',
+      birthday: '1990-10-16T09:31:44.992Z'
+    };
+
+    it('should return status 422 Unprocessable Entity for password length less than 4', function(done) {
+      server
+      .post('/api/user/signup')
+      .send(user)
+      .expect(422)
+      .end(function(err, res) {
+        assert.isTrue(res.body.errors.length === 1);
         done();
       });
     });
