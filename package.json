@@ -4,7 +4,7 @@
   "description": "REST server for auction marketplace.",
   "main": "index.js",
   "scripts": {
-    "start": "pm2 start app.js",
+    "start": "pm2 start app.js --watch",
     "test": "mocha ./tests/*",
     "lint": "./node_modules/.bin/eslint .",
     "autofix": "./node_modules/.bin/eslint --fix ."
