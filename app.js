@@ -1,18 +1,8 @@
 const express = require('express');
-
 const db = require('./models/db');
-const User = require('./models/user');
-
+const auth = require('./middlewares/auth');
 const userRoutes = require('./routes/user.js');
-
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-const bcrypt = require('bcrypt');
-
-const JwtStrategy = require('passport-jwt').Strategy;
-const ExtractJwt = require('passport-jwt').ExtractJwt;
-
-const jwtsecret = 'mysecret';
+const config = require('./config/config');
 
 const app = express();
 
@@ -23,47 +13,20 @@ const close = (err, onclose) => {
   process.exit();
 };
 
-passport.use(new LocalStrategy({
-    usernameField: 'email',
-    passwordField: 'password'
-  },
-  function(username, password, done) {
-    User.findOne({ email: username }, function (err, user) {
-      if (err) { return done(err); }
-      if (!user) return done(null, false);
-      if (!user.activated) return done(null, false);
-      if (!bcrypt.compareSync(password, user.password)) return done(null, false);
-      return done(null, user);
-    });
-  }
-));
-
-
-const jwtOptions = {
-  jwtFromRequest: ExtractJwt.fromHeader('auth'),
-  secretOrKey: jwtsecret
-};
-
-passport.use(new JwtStrategy(jwtOptions, function (payload, done) {
-    User.findOne({ email: payload.email }, (err, user) => {
-      if (err) return done(err);
-      if (user && user.tokens.includes(payload.jti)) done(null, user);
-      else done(null, false);
-    });
-  })
-);
-
-app.use(passport.initialize());
+app.use(auth.initialize());
 
 app.get('/api/healthcheck', function (req, res) {
-  res.status(200);
-  res.json({ status: 'OK' });
+  return res.json({ status: 'OK' });
 });
 
 app.use('/api/user', userRoutes);
 
-app.listen(3000, function () {
-  console.log('Auction app listening on port 3000!');
+app.use(function(err, req, res) {
+  res.status(500).send({ error: err });
+});
+
+app.listen(config.port, function () {
+  console.log(`Auction app listening on port ${config.port}!`);
 });
 
 process.on('SIGINT', function() {

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const bodyParser = require("body-parser");
-const passport = require('passport');
+const auth = require('../middlewares/auth');
 const controller = require('../controllers/users.js');
 const date = require('../helpers/date.js');
 const { body, check } = require('express-validator/check');
@@ -26,7 +26,7 @@ router.post('/signup', [
 
 router.post('/login', controller.login);
 
-router.post('/logout', passport.authenticate('jwt', { session: false }), controller.logout);
+router.post('/logout', auth.authenticate('jwt', { session: false }), controller.logout);
 
 router.post('/recovery', controller.recovery);
 

@@ -1,4 +1,4 @@
-const passport = require('passport');
+const auth = require('../middlewares/auth');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const uniqid = require('uniqid');
@@ -7,7 +7,6 @@ const mailer = require('../helpers/mailer');
 const config = require('../config/config');
 const templates = require('../helpers/templates');
 const { validationResult } = require('express-validator/check');
-
 
 const confirm = async function (req, res) {
   const email = req.params.email;
@@ -18,9 +17,8 @@ const confirm = async function (req, res) {
 
 const signup = async function (req, res) {
   const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.array() });
-  }
+  if (!errors.isEmpty()) return res.status(422).json({ errors: errors.array() });
+
   const user = req.body;
   user.password = await bcrypt.hash(user.password, config.saltRounds);
   User.create(user);
@@ -29,7 +27,7 @@ const signup = async function (req, res) {
 };
 
 const login = async function(req, res, next) {
-  passport.authenticate('local', function(err, user, info) {
+  auth.authenticate('local', function(err, user) {
     if (err || !user) return res.status(401).json({ status: 'Unauthorized' });
 
     const jti = uniqid();
@@ -41,20 +39,20 @@ const login = async function(req, res, next) {
     const token = jwt.sign(payload, config.jwtsecret, { expiresIn: config.expiresIn });
     user.tokens.push(jti);
     User.updateOne({ email: user.email }, user, function (err) {
-      if (err) res.json({ error: err });
+      if (err) return res.json({ error: err });
       res.json({ user: user.email, token: `JWT ${token}`});
     });
   })(req, res, next);
 };
 
-const logout = async function (req, res, next) {
+const logout = async function (req, res) {
   const token = req.get('auth');
   const decoded = jwt.verify(token, config.jwtsecret);
   const user = await User.findOne({ email: decoded.email });
   const indexOfToken = user.tokens.indexOf(decoded.jti);
   user.tokens = user.tokens.slice(0, indexOfToken).concat(user.tokens.slice(indexOfToken+1));
   User.updateOne({ email: user.email }, user, function (err) {
-    if (err) res.json({ error: err });
+    if (err) return res.json({ error: err });
     res.json({ message: 'Token invalid. User logged out successfully.' });
   });
 };
