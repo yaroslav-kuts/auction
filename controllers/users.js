@@ -17,7 +17,7 @@ const confirm = async function (req, res) {
 const signup = async function (req, res) {
   //TODO: add body validation
   const user = req.body;
-  user.password = bcrypt.hashSync(user.password, 10);
+  user.password = bcrypt.hashSync(user.password, config.saltRounds);
   User.create(user);
   mailer.send(templates.signup(user.email));
   res.json(user);
@@ -33,7 +33,7 @@ const login = async function(req, res, next) {
       email: user.email,
       jti: jti
     };
-    const token = jwt.sign(payload, config.jwtsecret, { expiresIn: '2h' });
+    const token = jwt.sign(payload, config.jwtsecret, { expiresIn: config.expiresIn });
     user.tokens.push(jti);
     User.updateOne({ email: user.email }, user, function (err) {
       if (err) res.json({ error: err });
@@ -55,7 +55,6 @@ const logout = async function (req, res, next) {
 };
 
 const checkauth = async function(req, res) {
-  //TODO: apply destructurization
   const decoded = jwt.verify(req.get('auth'), config.jwtsecret);
   const user = await User.findOne({ email: decoded.email });
   let isValid = false;
@@ -80,9 +79,7 @@ const recovery = async function(req, res) {
 };
 
 const changepass = async function(req, res) {
-  //TODO: apply destructurization
-  const email = req.body.email;
-  const token = req.body.token;
+  const { email, token } = req.body;
   const password = await bcrypt.hash(req.body.password, config.saltRounds);
   const user = await User.findOne({ email: email });
 
