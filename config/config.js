@@ -1,6 +1,7 @@
 module.exports = {
   port: 3000,
-  jwtsecret: 'mysecret',
+  jwtsecret: process.env.SECRET,
   saltRounds: 10,
-  expiresIn: '2h'
+  expiresIn: '2h',
+  poolSize: 10
 };
