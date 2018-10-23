@@ -27,6 +27,28 @@ const create = async function (req, res) {
   return res.json({ message: 'Lot was created', id: created._id });
 };
 
+const myLots = async function (req, res) {
+  const token = req.get('Authorization').split(' ')[1];
+  const user = jwt.verify(token, config.jwtsecret).id;
+  const lots = await Lot.find({ user }).exec();
+  return res.json({ lots });
+};
+
+const allLots = async function (req, res) {
+  const lots = await Lot.find({ status: 'inProgress' }).exec();
+  return res.json({ lots });
+};
+
+const update = async function (req, res) {
+  const lot = req.body;
+  //TODO add helper function for extraction token from request
+  const token = req.get('Authorization').split(' ')[1];
+  const user = jwt.verify(token, config.jwtsecret).id;
+  if (user !== lot.user) return res.status(403).json({ message: 'Forbidden' });
+  await Lot.updateOne({ _id: lot._id }, lot).exec();
+  return res.json({ message: 'Lot was updated'});
+};
+
 const remove = async function (req, res) {
   const lot = await Lot.findById(req.body._id);
   //TODO add helper function for extraction token from request
@@ -39,5 +61,8 @@ const remove = async function (req, res) {
 
 module.exports = {
   create,
+  myLots,
+  allLots,
+  update,
   remove
 };

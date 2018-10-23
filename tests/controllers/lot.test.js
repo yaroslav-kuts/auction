@@ -35,7 +35,7 @@ const lot = {
   order: {}
 };
 
-describe('/api/lot', function() {
+describe('/api/lots', function() {
 
   before(async function() {
     user = await User.create(user);
@@ -48,10 +48,10 @@ describe('/api/lot', function() {
     });
   });
 
-  describe('POST /api/lot/create', function() {
+  describe('POST /api/lots/create', function() {
     it('should return status 200 OK', function(done) {
       server
-      .post('/api/lot/create')
+      .post('/api/lots/create')
       .set({ Authorization: jwt })
       .send(lot)
       .expect(200)
@@ -61,7 +61,7 @@ describe('/api/lot', function() {
     });
   });
 
-  describe('POST /api/lot/create', function() {
+  describe('POST /api/lots/create', function() {
 
     const base64 = new Buffer(readFileSync(image)).toString('base64');
 
@@ -69,7 +69,7 @@ describe('/api/lot', function() {
 
     it('should return status 200 OK for json with image', function(done) {
       server
-      .post('/api/lot/create')
+      .post('/api/lots/create')
       .set({ Authorization: jwt })
       .send(lot)
       .expect(200)
@@ -79,14 +79,14 @@ describe('/api/lot', function() {
     });
   });
 
-  describe('POST /api/lot/delete', function() {
+  describe('POST /api/lots/delete', function() {
 
 
     it('should return status 200 OK', function(done) {
       Lot.create(lot, function (err, doc) {
         if (err) console.log(err);
         server
-        .post('/api/lot/delete')
+        .post('/api/lots/delete')
         .set({ Authorization: jwt })
         .send({ _id: doc._id })
         .expect(200)
