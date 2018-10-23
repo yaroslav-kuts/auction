@@ -38,10 +38,9 @@ const login = async function(req, res) {
   };
   const token = jwt.sign(payload, config.jwtsecret, { expiresIn: config.expiresIn });
   user.tokens.push(jti);
-  User.updateOne({ email: user.email }, user, function (err) {
-    if (err) return res.json({ error: err });
-    res.json({ user: user.email, token: `JWT ${token}`});
-  });
+  const query = User.updateOne({ email: user.email }, user);
+  await query.exec();
+  res.json({ user: user.email, token: `JWT ${token}`});
 };
 
 const logout = async function (req, res) {
@@ -50,10 +49,9 @@ const logout = async function (req, res) {
   const user = await User.findOne({ email: decoded.email });
   const indexOfToken = user.tokens.indexOf(decoded.jti);
   user.tokens = user.tokens.slice(0, indexOfToken).concat(user.tokens.slice(indexOfToken+1));
-  User.updateOne({ email: user.email }, user, function (err) {
-    if (err) return res.json({ error: err });
-    res.json({ message: 'Token invalid. User logged out successfully.' });
-  });
+  const query = User.updateOne({ email: user.email }, user);
+  await query.exec();
+  res.json({ message: 'Token invalid. User logged out successfully.' });
 };
 
 const checkauth = async function(req, res) {
