@@ -56,8 +56,6 @@ describe('/api/lot', function() {
       .send(lot)
       .expect(200)
       .end(function(err, res) {
-        console.log(res.body);
-        //assert.equal(res.body.message, 'Lot was created.');
         done();
       });
     });
@@ -76,8 +74,25 @@ describe('/api/lot', function() {
       .send(lot)
       .expect(200)
       .end(function(err, res) {
-        //assert.equal(res.body.message, 'Lot was created.');
         done();
+      });
+    });
+  });
+
+  describe('POST /api/lot/delete', function() {
+
+
+    it('should return status 200 OK', function(done) {
+      Lot.create(lot, function (err, doc) {
+        if (err) console.log(err);
+        server
+        .post('/api/lot/delete')
+        .set({ Authorization: jwt })
+        .send({ _id: doc._id })
+        .expect(200)
+        .end(function(err, res) {
+          done();
+        });
       });
     });
   });

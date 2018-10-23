@@ -24,9 +24,20 @@ const create = async function (req, res) {
   await Lot.updateOne({ _id: created._id }, { image: path }).exec();
   await mkdir(dir);
   await writeFile(path, base64, 'base64');
-  return res.json({ message: 'Lot was created.' });
+  return res.json({ message: 'Lot was created', id: created._id });
+};
+
+const remove = async function (req, res) {
+  const lot = await Lot.findById(req.body._id);
+  //TODO add helper function for extraction token from request
+  const token = req.get('Authorization').split(' ')[1];
+  const user = jwt.verify(token, config.jwtsecret).id;
+  if (user !== lot.user.toString()) return res.status(403).json({ message: 'Forbidden' });
+  await Lot.deleteOne({ _id: lot._id }).exec();
+  return res.json({ message: 'Lot was deleted'});
 };
 
 module.exports = {
-  create
+  create,
+  remove
 };

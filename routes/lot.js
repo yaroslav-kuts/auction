@@ -5,4 +5,6 @@ const controller = require('../controllers/lots.js');
 
 router.post('/create', auth.authenticate('jwt', { session: false }), controller.create);
 
+router.post('/delete', auth.authenticate('jwt', { session: false }), controller.remove);
+
 module.exports = router;
