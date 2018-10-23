@@ -26,23 +26,22 @@ const signup = async function (req, res) {
   res.json(user);
 };
 
-const login = async function(req, res, next) {
-  auth.authenticate('local', function(err, user) {
-    if (err || !user) return res.status(401).json({ status: 'Unauthorized' });
+const login = async function(req, res) {
+  const user = req.user;
+  if (!user) return res.status(401).json({ status: 'Unauthorized' });
 
-    const jti = uniqid();
-    const payload = {
-      id: user._id,
-      email: user.email,
-      jti: jti
-    };
-    const token = jwt.sign(payload, config.jwtsecret, { expiresIn: config.expiresIn });
-    user.tokens.push(jti);
-    User.updateOne({ email: user.email }, user, function (err) {
-      if (err) return res.json({ error: err });
-      res.json({ user: user.email, token: `JWT ${token}`});
-    });
-  })(req, res, next);
+  const jti = uniqid();
+  const payload = {
+    id: user._id,
+    email: user.email,
+    jti: jti
+  };
+  const token = jwt.sign(payload, config.jwtsecret, { expiresIn: config.expiresIn });
+  user.tokens.push(jti);
+  User.updateOne({ email: user.email }, user, function (err) {
+    if (err) return res.json({ error: err });
+    res.json({ user: user.email, token: `JWT ${token}`});
+  });
 };
 
 const logout = async function (req, res) {

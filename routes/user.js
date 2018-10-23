@@ -18,7 +18,7 @@ router.post('/signup', [
   })
 ], controller.signup);
 
-router.post('/login', controller.login);
+router.post('/login', auth.authenticate('local', { session: false }), controller.login);
 
 router.post('/logout', auth.authenticate('jwt', { session: false }), controller.logout);
 

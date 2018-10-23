@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const db = require('./db/db');
 const auth = require('./middlewares/auth');
 const userRoutes = require('./routes/user.js');
-const lotRoutes = require('./routes/lot.js');
+// const lotRoutes = require('./routes/lot.js');
 const config = require('./config/config');
 
 const app = express();
@@ -20,7 +20,7 @@ app.get('/api/healthcheck', function (req, res) {
 });
 
 app.use('/api/user', userRoutes);
-app.use('/api/lot', lotRoutes);
+// app.use('/api/lot', lotRoutes);
 
 app.use(function(err, req, res) {
   res.status(500).send({ error: err });
