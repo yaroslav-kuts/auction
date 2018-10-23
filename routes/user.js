@@ -1,14 +1,8 @@
-const express = require('express');
-const router = express.Router();
-const bodyParser = require("body-parser");
+const router = require('express').Router();
 const auth = require('../middlewares/auth');
 const controller = require('../controllers/users.js');
 const date = require('../helpers/date.js');
 const { body, check } = require('express-validator/check');
-
-router.use(bodyParser.urlencoded({ extended: true }));
-
-router.use(bodyParser.json());
 
 router.get('/confirm/:email', controller.confirm);
 
