@@ -1,7 +1,8 @@
 const router = require('express').Router();
 const auth = require('../middlewares/auth');
 const controller = require('../controllers/users.js');
-const date = require('../helpers/date.js');
+// const date = require('../helpers/date.js');
+const moment = require('moment');
 const { body, check } = require('express-validator/check');
 
 router.get('/confirm/:email', controller.confirm);
@@ -13,7 +14,7 @@ router.post('/signup', [
   check('phone').isMobilePhone('en-US'),
   check('password').isLength({ min: 4 }),
   body('birthday').custom(value => {
-    if (date.getAge(new Date(value)) < 21) return Promise.reject('Age must be 21+.');
+    if (moment().diff(new Date(value), 'years') < 21) return Promise.reject('Age must be 21+.');
     return Promise.resolve();
   })
 ], controller.signup);
