@@ -1,7 +1,6 @@
 const router = require('express').Router();
 const auth = require('../middlewares/auth');
 const controller = require('../controllers/users.js');
-// const date = require('../helpers/date.js');
 const moment = require('moment');
 const { body, check } = require('express-validator/check');
 

@@ -148,7 +148,7 @@ describe('/api/user', function() {
       .send({ email: user.email, password: user.password })
       .expect(200)
       .end(function(err, res) {
-        jwt = res.body.token.split(' ')[1];
+        jwt = res.body.token;
         done();
       });
     });
@@ -158,7 +158,7 @@ describe('/api/user', function() {
     it('should return status 200 OK', function(done) {
       server
       .get('/api/user/checkauth')
-      .set({ auth: jwt })
+      .set({ Authorization: jwt })
       .expect(200)
       .end(function(err, res) {
         assert.equal(res.body.isValid, true);
@@ -202,7 +202,7 @@ describe('/api/user', function() {
       .send({ email: user.email, password: newpass })
       .expect(200)
       .end(function(err, res) {
-        jwt = res.body.token.split(' ')[1];
+        jwt = res.body.token;
         done();
       });
     });
@@ -212,7 +212,7 @@ describe('/api/user', function() {
     it('should confirm that token got with new password is valid', function(done) {
       server
       .get('/api/user/checkauth')
-      .set({ auth: jwt })
+      .set({ Authorization: jwt })
       .expect(200)
       .end(function(err, res) {
         assert.equal(res.body.isValid, true);
@@ -225,7 +225,7 @@ describe('/api/user', function() {
     it('should return status 200 OK', function(done) {
       server
       .post('/api/user/logout')
-      .set({ auth: jwt })
+      .set({ Authorization: jwt })
       .expect(200)
       .end(function(err, res) {
         assert.equal(res.body.message, 'Token invalid. User logged out successfully.');
@@ -238,7 +238,7 @@ describe('/api/user', function() {
     it('should confirm that revoked token is not valid', function(done) {
       server
       .get('/api/user/checkauth')
-      .set({ auth: jwt })
+      .set({ Authorization: jwt })
       .expect(200)
       .end(function(err, res) {
         assert.equal(res.body.isValid, false);

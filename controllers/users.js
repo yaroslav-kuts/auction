@@ -1,4 +1,3 @@
-const auth = require('../middlewares/auth');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const uniqid = require('uniqid');
@@ -40,22 +39,22 @@ const login = async function(req, res) {
   user.tokens.push(jti);
   const query = User.updateOne({ email: user.email }, user);
   await query.exec();
-  res.json({ user: user.email, token: `JWT ${token}`});
+  return res.json({ user: user.email, token: `Bearer ${token}`});
 };
 
 const logout = async function (req, res) {
-  const token = req.get('auth');
+  const token = req.get('Authorization').split(' ')[1];
   const decoded = jwt.verify(token, config.jwtsecret);
   const user = await User.findOne({ email: decoded.email });
   const indexOfToken = user.tokens.indexOf(decoded.jti);
   user.tokens = user.tokens.filter((t, i) => i !== indexOfToken);
   const query = User.updateOne({ email: user.email }, user);
   await query.exec();
-  res.json({ message: 'Token invalid. User logged out successfully.' });
+  return res.json({ message: 'Token invalid. User logged out successfully.' });
 };
 
 const checkauth = async function(req, res) {
-  const decoded = jwt.verify(req.get('auth'), config.jwtsecret);
+  const decoded = jwt.verify(req.get('Authorization').split(' ')[1], config.jwtsecret);
   const user = await User.findOne({ email: decoded.email });
   let isValid = false;
   if (user.tokens.includes(decoded.jti)) isValid = true;

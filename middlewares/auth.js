@@ -22,7 +22,7 @@ passport.use(new LocalStrategy({
 ));
 
 const jwtOptions = {
-  jwtFromRequest: ExtractJwt.fromHeader('auth'),
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: config.jwtsecret
 };
 
