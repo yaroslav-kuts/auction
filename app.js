@@ -9,9 +9,9 @@ const config = require('./config/config');
 
 const app = express();
 
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true, limit: config.sizeLimit }));
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: config.sizeLimit }));
 
 app.use(auth.initialize());
 

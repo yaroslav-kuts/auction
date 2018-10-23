@@ -1,7 +1,7 @@
+require('../../app');
 const assert = require('chai').assert;
 const supertest = require('supertest');
-const User = require('../models/user');
-const app = require('../app');
+const User = require('../../models/user');
 
 const server = supertest.agent("http://localhost:3000");
 

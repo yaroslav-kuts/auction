@@ -3,5 +3,6 @@ module.exports = {
   jwtsecret: process.env.SECRET,
   saltRounds: 10,
   expiresIn: '2h',
-  poolSize: 10
+  poolSize: 10,
+  sizeLimit: '1mb'
 };
