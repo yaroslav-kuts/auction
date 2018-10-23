@@ -48,7 +48,7 @@ const logout = async function (req, res) {
   const decoded = jwt.verify(token, config.jwtsecret);
   const user = await User.findOne({ email: decoded.email });
   const indexOfToken = user.tokens.indexOf(decoded.jti);
-  user.tokens = user.tokens.slice(0, indexOfToken).concat(user.tokens.slice(indexOfToken+1));
+  user.tokens = user.tokens.filter((t, i) => i !== indexOfToken);
   const query = User.updateOne({ email: user.email }, user);
   await query.exec();
   res.json({ message: 'Token invalid. User logged out successfully.' });
