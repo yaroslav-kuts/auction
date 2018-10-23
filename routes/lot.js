@@ -3,6 +3,6 @@ const auth = require('../middlewares/auth');
 const controller = require('../controllers/lots.js');
 // const { body, check } = require('express-validator/check');
 
-router.post('/create', controller.create);
+router.post('/create', auth.authenticate('jwt', { session: false }), controller.create);
 
 module.exports = router;
