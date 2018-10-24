@@ -11,7 +11,8 @@ const create = async function(req, res) {
 };
 
 const get = async function(req, res) {
-  //
+  const bids = await Bid.find({ lot: req.query.lot });
+  return res.json({ bids });
 };
 
 module.exports = {
