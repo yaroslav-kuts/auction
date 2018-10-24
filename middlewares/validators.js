@@ -16,4 +16,4 @@ const forLot = [ check('user').isMongoId() ];
 module.exports = {
   forUser,
   forLot
-}
+};
