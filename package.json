@@ -27,6 +27,7 @@
     "jsonwebtoken": "^8.3.0",
     "moment": "^2.22.2",
     "mongoose": "^5.3.4",
+    "mongoose-paginate": "^5.0.3",
     "mongoose-unique-validator": "^2.0.2",
     "nodemailer": "^4.6.8",
     "passport": "^0.4.0",

@@ -22,13 +22,16 @@ const create = async function (req, res) {
 };
 
 const myLots = async function (req, res) {
-  const lots = await Lot.find({ user: req.user.id }).exec();
-  console.log(lots);
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const lots = await Lot.paginate({ user: req.user.id }, { page, limit });
   return res.json({ lots });
 };
 
 const allLots = async function (req, res) {
-  const lots = await Lot.find({ status: 'inProgress' }).exec();
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const lots = await Lot.paginate({ status: 'inProgress' }, { page, limit });
   return res.json({ lots });
 };
 

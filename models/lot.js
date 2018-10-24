@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const paginate = require('mongoose-paginate');
 
 const lotSchema = new Schema({
   title: {
@@ -56,5 +57,7 @@ const lotSchema = new Schema({
     }
   }
 });
+
+lotSchema.plugin(paginate);
 
 module.exports = mongoose.model('Lot', lotSchema);
