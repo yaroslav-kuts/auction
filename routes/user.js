@@ -1,22 +1,13 @@
 const router = require('express').Router();
 const auth = require('../middlewares/auth');
+const validators = require('../middlewares/validators');
 const controller = require('../controllers/users.js');
-const moment = require('moment');
-const { body, check } = require('express-validator/check');
 
 router.get('/confirm/:email', controller.confirm);
 
 router.get('/checkauth', controller.checkauth);
 
-router.post('/signup', [
-  check('email').isEmail(),
-  check('phone').isMobilePhone('en-US'),
-  check('password').isLength({ min: 4 }),
-  body('birthday').custom(value => {
-    if (moment().diff(new Date(value), 'years') < 21) return Promise.reject('Age must be 21+.');
-    return Promise.resolve();
-  })
-], controller.signup);
+router.post('/signup', validators.forUser, controller.signup);
 
 router.post('/login', auth.authenticate('local', { session: false }), controller.login);
 
