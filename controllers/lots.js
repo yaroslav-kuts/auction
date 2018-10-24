@@ -1,4 +1,5 @@
 const Lot = require('../models/lot');
+const Bid = require('../models/bid');
 const fs = require('fs');
 const util = require('util');
 const mkdir = util.promisify(fs.mkdir);
@@ -24,8 +25,10 @@ const create = async function (req, res) {
 const myLots = async function (req, res) {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
-  const lots = await Lot.paginate({ user: req.user.id }, { page, limit });
-  return res.json({ lots });
+  const created = await Lot.find({ user: req.user.id });
+  const bids = await Bid.find({ user: req.user.id }).populate('lot');
+  let lots = bids.map(bid => bid.lot).concat(created);
+  return res.json({ lots: lots.slice((page - 1) * limit, page * limit) });
 };
 
 const allLots = async function (req, res) {
