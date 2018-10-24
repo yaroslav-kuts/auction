@@ -1,7 +1,7 @@
 require('../../app');
+const assert = require('chai').assert;
 const supertest = require('supertest');
 const { readFileSync } = require('fs');
-const assert = require('chai').assert;
 const Lot = require('../../models/lot');
 const User = require('../../models/user');
 
@@ -38,8 +38,7 @@ const lot = {
 describe('/api/lots', function() {
 
   before(async function() {
-    user = await User.create(user);
-    Lot.user = user._id;
+    Lot.user = await User.create(user)._id;
   });
 
   after(function() {
@@ -62,11 +61,7 @@ describe('/api/lots', function() {
   });
 
   describe('POST /api/lots/create', function() {
-
-    const base64 = new Buffer(readFileSync(image)).toString('base64');
-
-    lot.image = base64;
-
+    lot.image = new Buffer(readFileSync(image)).toString('base64');
     it('should return status 200 OK for json with image', function(done) {
       server
       .post('/api/lots/create')
@@ -79,9 +74,59 @@ describe('/api/lots', function() {
     });
   });
 
+  describe('POST /api/lots/update', function() {
+    it('should return status 200 OK', function(done) {
+      lot.description = 'changed description';
+      Lot.create(lot, function (err, doc) {
+        if (err) console.log(err);
+        server
+        .post('/api/lots/update')
+        .set({ Authorization: jwt })
+        .send(lot)
+        .expect(200)
+        .end(function(err, res) {
+          Lot.findById(doc._id, function(err, finded) {
+            assert.equal(finded.description, lot.description);
+            done();
+          });
+        });
+      });
+    });
+  });
+
+  describe('POST /api/lots/my', function() {
+    it('should return status 200 OK', function(done) {
+      Lot.create(lot, function (err, doc) {
+        if (err) console.log(err);
+        server
+        .post('/api/lots/my')
+        .set({ Authorization: jwt })
+        .send(lot)
+        .expect(200)
+        .end(function(err, res) {
+          done();
+        });
+      });
+    });
+  });
+
+  describe('POST /api/lots/all', function() {
+    it('should return status 200 OK', function(done) {
+      Lot.create(lot, function (err, doc) {
+        if (err) console.log(err);
+        server
+        .post('/api/lots/all')
+        .set({ Authorization: jwt })
+        .send(lot)
+        .expect(200)
+        .end(function(err, res) {
+          done();
+        });
+      });
+    });
+  });
+
   describe('POST /api/lots/delete', function() {
-
-
     it('should return status 200 OK', function(done) {
       Lot.create(lot, function (err, doc) {
         if (err) console.log(err);
