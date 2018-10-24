@@ -3,14 +3,16 @@ const auth = require('../middlewares/auth');
 const controller = require('../controllers/lots.js');
 // const { body, check } = require('express-validator/check');
 
-router.post('/create', auth.authenticate('jwt', { session: false }), controller.create);
+router.use(auth.authenticate('jwt', { session: false }));
 
-router.get('/my', auth.authenticate('jwt', { session: false }), controller.myLots);
+router.post('/create', controller.create);
 
-router.get('/all', auth.authenticate('jwt', { session: false }), controller.allLots);
+router.get('/my', controller.myLots);
 
-router.post('/update', auth.authenticate('jwt', { session: false }), controller.update);
+router.get('/all', controller.allLots);
 
-router.post('/delete', auth.authenticate('jwt', { session: false }), controller.remove);
+router.post('/update', controller.update);
+
+router.post('/delete', controller.remove);
 
 module.exports = router;
