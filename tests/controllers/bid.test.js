@@ -85,9 +85,21 @@ describe('/api/bids', function () {
     });
   });
 
+  describe('POST', function() {
+    it('should return status 422 Unprocessable Entity for bid with non-numeric price', function(done) {
+      bid.price = 'invalid';
+      server
+      .post('/api/bids/create')
+      .set({ Authorization: jwt })
+      .send(bid)
+      .expect(422, done);
+    });
+  });
+
   describe('POST /api/bids/create', function() {
     it('should return status 405 Method Not Allowed if user create bid for own lot', function(done) {
       bid.lot = lot._id;
+      bid.price = 67;
       server
       .post('/api/bids/create')
       .set({ Authorization: jwt })
@@ -103,7 +115,7 @@ describe('/api/bids', function () {
       .set({ Authorization: jwt })
       .expect(200)
       .end(function(err, res) {
-        assert.isTrue(res.body.bids.length === 1);
+        assert.isTrue(res.body.bids.length > 0);
         done();
       });
     });

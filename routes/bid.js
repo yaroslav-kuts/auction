@@ -1,11 +1,11 @@
 const router = require('express').Router();
 const auth = require('../middlewares/auth');
 const controller = require('../controllers/bids.js');
-// const validators = require('../middlewares/validators');
+const validators = require('../middlewares/validators');
 
 router.use(auth.authenticate('jwt', { session: false }));
 
-router.post('/create', controller.create);
+router.post('/create', validators.forBid, controller.create);
 
 router.get('/get', controller.get);
 
