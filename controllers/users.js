@@ -5,7 +5,6 @@ const User = require('../models/user');
 const mailer = require('../helpers/mailer');
 const config = require('../config/config');
 const templates = require('../helpers/templates');
-const { validationResult } = require('express-validator/check');
 
 const confirm = async function (req, res) {
   const email = req.params.email;
@@ -15,9 +14,6 @@ const confirm = async function (req, res) {
 };
 
 const signup = async function (req, res) {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.status(422).json({ errors: errors.array() });
-
   const user = req.body;
   user.password = await bcrypt.hash(user.password, config.saltRounds);
   User.create(user);
