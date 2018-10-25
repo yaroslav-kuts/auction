@@ -71,12 +71,12 @@ describe('/api/lots', function() {
 
   describe('POST /api/lots/create', function() {
     lot.image = new Buffer(readFileSync(image)).toString('base64');
-    it('should return status 401 Unauthorized for invalid token', function(done) {
+    it('should return status 401 Unauthorized for the invalid token', function(done) {
       server
       .post('/api/lots/create')
       .set({ Authorization: 'invalid' })
       .send(lot)
-      .expect(401, done)
+      .expect(401, done);
     });
   });
 
@@ -119,7 +119,7 @@ describe('/api/lots', function() {
   });
 
   describe('POST /api/lots/update', function() {
-    it('should return status 401 Unauthorized for invalid token', function(done) {
+    it('should return status 401 Unauthorized for the invalid token', function(done) {
       lot.description = 'changed description';
       Lot.create(lot, function (err, doc) {
         if (err) console.log(err);
@@ -161,7 +161,7 @@ describe('/api/lots', function() {
   });
 
   describe('POST /api/lots/my', function() {
-    it('should return status 401 Unauthorized for invalid token', function(done) {
+    it('should return status 401 Unauthorized for the invalid token', function(done) {
       server
       .get('/api/lots/my')
       .set({ Authorization: 'invalid' })
@@ -198,7 +198,7 @@ describe('/api/lots', function() {
   });
 
   describe('POST /api/lots/all', function() {
-    it('should return status 401 Unauthorized for invalid token', function(done) {
+    it('should return status 401 Unauthorized for the invalid token', function(done) {
       server
       .get('/api/lots/all')
       .set({ Authorization: 'invalid' })
@@ -225,13 +225,54 @@ describe('/api/lots', function() {
   });
 
   describe('POST /api/lots/delete', function() {
-    it('should return status 401 Unauthorized for invalid token', function(done) {
+    it('should return status 401 Unauthorized for the invalid token', function(done) {
       Lot.create(lot, function (err, doc) {
         server
         .post('/api/lots/delete')
         .set({ Authorization: 'invalid' })
         .send({ _id: doc._id })
         .expect(401, done);
+      });
+    });
+  });
+
+  describe('GET /api/lots/:id', function() {
+    it('should return status 200 OK', function(done) {
+      Lot.create(lot, function (err, doc) {
+        if (err) console.log(err);
+        server
+        .get(`/api/lots/${doc._id}`)
+        .set({ Authorization: jwt })
+        .expect(200)
+        .end(function(err, res) {
+          assert.equal(res.body.title, lot.title);
+          done();
+        });
+      });
+    });
+  });
+
+  describe('GET /api/lots/:id', function() {
+    it('should return status 401 Unauthorized for the invalid token', function(done) {
+      Lot.create(lot, function (err, doc) {
+        if (err) console.log(err);
+        server
+        .get(`/api/lots/${doc._id}`)
+        .set({ Authorization: 'invalid' })
+        .expect(401, done);
+      });
+    });
+  });
+
+  describe('GET /api/lots/:id', function() {
+    it('should return status 403 Forbidden for lot that belongs to another user', function(done) {
+      lot.user = '5bd1aea5bf1ed439f35d1376';
+      Lot.create(lot, function (err, doc) {
+        if (err) console.log(err);
+        server
+        .get(`/api/lots/${doc._id}`)
+        .set({ Authorization: jwt })
+        .expect(403, done);
       });
     });
   });

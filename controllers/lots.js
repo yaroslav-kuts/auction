@@ -22,6 +22,12 @@ const create = async function (req, res) {
   return res.json(created);
 };
 
+const getLot = async function (req, res) {
+  const lot = await Lot.findById(req.params.id);
+  if (lot.user.toString() !== req.user.id) return res.status(403).json({ message: 'Forbidden' });
+  return res.json(lot);
+};
+
 const myLots = async function (req, res) {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
@@ -54,6 +60,7 @@ const remove = async function (req, res) {
 
 module.exports = {
   create,
+  getLot,
   myLots,
   allLots,
   update,

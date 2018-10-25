@@ -15,4 +15,6 @@ router.post('/update', controller.update);
 
 router.post('/delete', controller.remove);
 
+router.get('/:id', controller.getLot);
+
 module.exports = router;
