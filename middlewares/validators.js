@@ -19,6 +19,13 @@ const forUser = [
 
 const forLot = [
   check('user').isMongoId(),
+  check('currentPrice').matches(/^[0-9]+((\.)[0-9]{1,2})?$/),
+  check('estimatedPrice').matches(/^[0-9]+((\.)[0-9]{1,2})?$/),
+  check('startTime').isAfter(),
+  body(['endTime']).custom(async ( endTime, { req }) => {
+    const isValid = (new Date(req.body.startTime ) < new Date(endTime));
+    if (!isValid) throw new Error('Start time must be less than end time.');
+  }),
   sendErrorIfExists
 ];
 

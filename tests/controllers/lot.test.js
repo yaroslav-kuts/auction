@@ -35,8 +35,8 @@ describe('/api/lots', function() {
     createdAt: '2018-10-16T09:31:44.992Z',
     currentPrice: 100,
     estimatedPrice: 300,
-    startTime: '2018-10-16T09:31:44.992Z',
-    endTime: '2018-10-16T09:31:44.992Z',
+    startTime: '2018-11-16',
+    endTime: '2019-01-16T09:31:44.992Z',
     order: {}
   };
 
