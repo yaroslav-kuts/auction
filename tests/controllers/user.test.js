@@ -2,26 +2,25 @@ require('../../app');
 const assert = require('chai').assert;
 const supertest = require('supertest');
 const User = require('../../models/user');
+const db = require('../../db/db');
 
 const server = supertest.agent("http://localhost:3000");
 
-const user = {
-  email: 'yaroslavkuts@gmail.com',
-  password: 'testing',
-  phone: '+1-541-654-9176',
-  firstName: 'John',
-  lastName: 'Dou',
-  birthday: '1990-10-16T09:31:44.992Z'
-};
-
-let jwt, changePassToken, newpass = 'newpass';
-
 describe('/api/user', function() {
 
+  const user = {
+    email: 'yaroslavkuts@gmail.com',
+    password: 'testing',
+    phone: '+1-541-654-9176',
+    firstName: 'John',
+    lastName: 'Dou',
+    birthday: '1990-10-16T09:31:44.992Z'
+  };
+
+  let jwt, changePassToken, newpass = 'newpass';
+
   after(function() {
-    User.deleteMany({}, function(err) {
-      if (err) console.log(err);
-    });
+    db.clean();
   });
 
   describe('POST /api/user/signup', function() {
