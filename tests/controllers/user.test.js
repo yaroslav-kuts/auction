@@ -1,10 +1,10 @@
 require('../../app');
 const assert = require('chai').assert;
 const supertest = require('supertest');
-const User = require('../../models/user');
+const config = require('../../config/config');
 const db = require('../../db');
 
-const server = supertest.agent("http://localhost:3000");
+const server = supertest.agent(`http://localhost:${config.port}`);
 
 describe('/api/user', function() {
 

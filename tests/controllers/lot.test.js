@@ -2,12 +2,13 @@ require('../../app');
 const assert = require('chai').assert;
 const supertest = require('supertest');
 const { readFileSync } = require('fs');
+const config = require('../../config/config');
 const db = require('../../db');
 const token = require('../helpers/credentials');
 const Lot = require('../../models/lot');
 const User = require('../../models/user');
 
-const server = supertest.agent('http://localhost:3000');
+const server = supertest.agent(`http://localhost:${config.port}`);
 
 describe('/api/lots', function() {
 
@@ -46,7 +47,7 @@ describe('/api/lots', function() {
   });
 
   after(function() {
-
+    db.clean();
   });
 
   describe('POST /api/lots/create', function() {
