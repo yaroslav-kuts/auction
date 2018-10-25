@@ -16,23 +16,17 @@ app.use(bodyParser.json({ limit: config.sizeLimit }));
 
 app.use(auth.initialize());
 
-app.get('/api/healthcheck', function (req, res) {
-  return res.json({ status: 'OK' });
-});
+app.get('/api/healthcheck', (req, res) => res.json({ status: 'OK' }));
 
 app.use('/api/user', userRoutes);
 app.use('/api/lots', lotRoutes);
 app.use('/api/bids', bidRoutes);
 
-app.use(function(err, req, res, next) {
-  res.status(500).send({ error: err });
-});
+app.use((err, req, res) => res.status(500).send({ error: err }));
 
-app.listen(config.port, function () {
-  console.log(`Auction app listening on port ${config.port}!`);
-});
+app.listen(config.port, () => console.log(`App up on port ${config.port}`));
 
-process.on('SIGINT', function() {
+process.on('SIGINT', () => {
   db.close(null, () => {
     console.log('Process was interupted!');
   });
