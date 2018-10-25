@@ -6,7 +6,7 @@ const mkdir = util.promisify(fs.mkdir);
 const writeFile = util.promisify(fs.writeFile);
 
 const create = async function (req, res) {
-  const lot = req.body;
+  let lot = req.body;
   lot.user = req.user.id;
 
   const base64 = lot.image;
@@ -19,7 +19,7 @@ const create = async function (req, res) {
   await Lot.updateOne({ _id: created._id }, { image: path }).exec();
   await mkdir(dir);
   await writeFile(path, base64, 'base64');
-  return res.json({ message: 'Lot was created', id: created._id });
+  return res.json(created);
 };
 
 const myLots = async function (req, res) {
