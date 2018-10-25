@@ -2,7 +2,7 @@ require('../../app');
 const assert = require('chai').assert;
 const supertest = require('supertest');
 const { readFileSync } = require('fs');
-const db = require('../../db/db');
+const db = require('../../db');
 const token = require('../helpers/credentials');
 const Lot = require('../../models/lot');
 const User = require('../../models/user');
@@ -46,7 +46,7 @@ describe('/api/lots', function() {
   });
 
   after(function() {
-    db.clean();
+
   });
 
   describe('POST /api/lots/create', function() {

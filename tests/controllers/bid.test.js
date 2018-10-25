@@ -4,7 +4,7 @@ const supertest = require('supertest');
 const config = require('../../config/config');
 const Lot = require('../../models/lot');
 const User = require('../../models/user');
-const db = require('../../db/db');
+const db = require('../../db');
 const token = require('../helpers/credentials');
 
 const server = supertest.agent(`http://localhost:${config.port}`);
