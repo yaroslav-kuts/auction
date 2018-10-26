@@ -15,6 +15,6 @@ router.post('/logout', auth.authenticate('jwt', { session: false }), controller.
 
 router.post('/recovery', controller.recovery);
 
-router.post('/change/password', controller.changepass);
+router.post('/change/password', validators.forUserPassword, controller.changepass);
 
 module.exports = router;

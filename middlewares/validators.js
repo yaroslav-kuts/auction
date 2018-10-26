@@ -17,6 +17,11 @@ const forUser = [
   sendErrorIfExists
 ];
 
+const forUserPassword = [
+  check('password').isLength({ min: 4 }),
+  sendErrorIfExists
+];
+
 const forLot = [
   check('user').isMongoId(),
   check('currentPrice').matches(/^[0-9]+((\.)[0-9]{1,2})?$/),
@@ -44,6 +49,7 @@ const forBid = [
 
 module.exports = {
   forUser,
+  forUserPassword,
   forLot,
   forLotUpdate,
   forBid

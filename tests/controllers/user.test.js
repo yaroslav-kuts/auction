@@ -180,12 +180,37 @@ describe('/api/user', function() {
   });
 
   describe('POST /api/user/change/password', function() {
+
+    const user = {
+      email: 'yaroslavkuts@gmail.com',
+      password: 'testing',
+      phone: '+1-541-654-91',
+      firstName: 'John',
+      lastName: 'Dou',
+      birthday: '1990-10-16T09:31:44.992Z'
+    };
+
+    it('should return status 422 Unprocessable Entity for not valid password', function(done) {
+      server
+      .post('/api/user/change/password')
+      .send({
+        email: user.email,
+        token: changePassToken,
+        password: ''
+       })
+      .expect(422, done);
+    });
+  });
+
+  describe('POST /api/user/change/password', function() {
     it('should store new valid password', function(done) {
       server
       .post('/api/user/change/password')
-      .send({ email: user.email,
-              token: changePassToken,
-              password: newpass })
+      .send({
+        email: user.email,
+        token: changePassToken,
+        password: newpass
+       })
       .expect(200)
       .end(function(err, res) {
         console.log();
