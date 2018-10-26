@@ -45,10 +45,14 @@ const allLots = async function (req, res) {
 };
 
 const update = async function (req, res) {
-  const lot = req.body;
-  if (req.user.id !== lot.user.toString()) return res.status(403).json({ message: 'Forbidden' });
-  await Lot.updateOne({ _id: lot._id }, lot).exec();
-  return res.json({ message: 'Lot was updated'});
+  if (req.user.id !== req.body.user.toString()) return res.status(403).json({ message: 'Forbidden' });
+  const lot = await Lot.findById(req.body._id);
+  lot.title = req.body.title || lot.title;
+  lot.description = req.body.description || lot.description;
+  lot.currentPrice = req.body.currentPrice || lot.currentPrice;
+  lot.image = req.body.image || lot.image;
+  await Lot.updateOne({ _id: req.body._id }, lot).exec();
+  return res.json(lot);
 };
 
 const remove = async function (req, res) {
