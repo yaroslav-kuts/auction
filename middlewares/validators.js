@@ -7,50 +7,24 @@ const sendErrorIfExists = (req, res, next) => {
   next();
 };
 
-const forUser = [
-  check('email').isEmail(),
-  check('phone').isMobilePhone('en-US'),
-  check('password').isLength({ min: 4 }),
-  body('birthday').custom(async (value) => {
-    if (moment().diff(new Date(value), 'years') < 21) throw new Error('Age must be 21+.');
-  }),
-  sendErrorIfExists
-];
-
-const forUserPassword = [
-  check('password').isLength({ min: 4 }),
-  sendErrorIfExists
-];
-
-const forLot = [
-  check('user').isMongoId(),
-  check('currentPrice').matches(/^[0-9]+((\.)[0-9]{1,2})?$/),
-  check('estimatedPrice').matches(/^[0-9]+((\.)[0-9]{1,2})?$/),
-  check('startTime').isAfter(),
-  body(['endTime']).custom(async ( endTime, { req }) => {
-    const isValid = (new Date(req.body.startTime ) < new Date(endTime));
-    if (!isValid) throw new Error('Start time must be less than end time.');
-  }),
-  sendErrorIfExists
-];
-
-const forLotUpdate = [
-  check('currentPrice').matches(/^[0-9]+((\.)[0-9]{1,2})?$/),
-  sendErrorIfExists
-];
-
-const forBid = [
-  body('price').custom(async (value) => {
-    const isValid = /^[0-9]+((\.)[0-9]{1,2})?$/.test(value);
-    if (isValid === false) throw new Error('Not valid price');
-  }),
-  sendErrorIfExists
-];
+const email = check('email').isEmail();
+const phone = check('phone').isMobilePhone('en-US');
+const password = check('password').isLength({ min: 4 });
+const age =   body('birthday').custom(async (value) => {
+  if (moment().diff(new Date(value), 'years') < 21) throw new Error('Age must be 21+.');
+});
+const id = (field) => check(field).isMongoId();
+const price = (field) => check(field).matches(/^[0-9]+((\.)[0-9]{1,2})?$/);
+const start = check('startTime').isAfter();
+const end =   body(['endTime']).custom(async ( endTime, { req }) => {
+  const isValid = (new Date(req.body.startTime ) < new Date(endTime));
+  if (!isValid) throw new Error('Start time must be less than end time.');
+});
 
 module.exports = {
-  forUser,
-  forUserPassword,
-  forLot,
-  forLotUpdate,
-  forBid
+  forUser: [email, phone, password, age, sendErrorIfExists],
+  forUserPassword: [password, sendErrorIfExists],
+  forLot: [id('user'), price('currentPrice'), price('estimatedPrice'), start, end, sendErrorIfExists],
+  forLotUpdate: [price('currentPrice'), sendErrorIfExists],
+  forBid: [price('price'), sendErrorIfExists]
 };
