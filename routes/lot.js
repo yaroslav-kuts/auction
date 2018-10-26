@@ -11,7 +11,7 @@ router.get('/my', controller.myLots);
 
 router.get('/all', controller.allLots);
 
-router.post('/update', controller.update);
+router.post('/update', validators.forLotUpdate, controller.update);
 
 router.delete('/delete/:id', controller.remove);
 

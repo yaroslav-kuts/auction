@@ -29,6 +29,11 @@ const forLot = [
   sendErrorIfExists
 ];
 
+const forLotUpdate = [
+  check('currentPrice').matches(/^[0-9]+((\.)[0-9]{1,2})?$/),
+  sendErrorIfExists
+];
+
 const forBid = [
   body('price').custom(async (value) => {
     const isValid = /^[0-9]+((\.)[0-9]{1,2})?$/.test(value);
@@ -40,5 +45,6 @@ const forBid = [
 module.exports = {
   forUser,
   forLot,
+  forLotUpdate,
   forBid
 };

@@ -330,6 +330,22 @@ describe('/api/lots', () => {
   });
 
   describe('POST /api/lots/update', () => {
+    it('should return status 422 for the negative current price', (done) => {
+      factory.build('lot').then((lot) => {
+        lot.user = user._id;
+        Lot.create(lot, () => {
+          lot.currentPrice = -100;
+          server
+          .post('/api/lots/update')
+          .set({ Authorization: jwt })
+          .send(lot)
+          .expect(422, done);
+        });
+      });
+    });
+  });
+
+  describe('POST /api/lots/update', () => {
     it('can not change sensative data', (done) => {
       factory.build('lot').then((lot) => {
         lot.user = user._id;
