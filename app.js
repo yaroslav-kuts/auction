@@ -3,10 +3,11 @@ const express = require('express');
 const bodyParser = require("body-parser");
 const db = require('./db');
 const auth = require('./middlewares/auth');
-const userRoutes = require('./routes/user.js');
-const lotRoutes = require('./routes/lot.js');
-const bidRoutes = require('./routes/bid.js');
+const userRoutes = require('./routes/user');
+const lotRoutes = require('./routes/lot');
+const bidRoutes = require('./routes/bid');
 const config = require('./config/config');
+const sockets = require('./websocket');
 
 const app = express();
 
