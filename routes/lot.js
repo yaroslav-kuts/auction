@@ -13,7 +13,7 @@ router.get('/all', controller.allLots);
 
 router.post('/update', controller.update);
 
-router.post('/delete', controller.remove);
+router.delete('/delete/:id', controller.remove);
 
 router.get('/:id', controller.getLot);
 

@@ -56,7 +56,7 @@ const update = async function (req, res) {
 };
 
 const remove = async function (req, res) {
-  const lot = await Lot.findById(req.body._id);
+  const lot = await Lot.findById(req.params.id);
   if (req.user.id !== lot.user.toString()) return res.status(403).json({ message: 'Forbidden' });
   await Lot.deleteOne({ _id: lot._id }).exec();
   return res.json({ message: 'Lot was deleted'});
