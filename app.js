@@ -39,7 +39,7 @@ io.on('connection', async function(socket) {
     const lot = url.parse(socket.handshake.url, true).query.lot;
     socket.join(lot);
     const bids = await Bid.find({ lot }).exec();
-    io.to(lot).emit('bid', JSON.stringify(bids));
+    io.to(lot).emit('open', JSON.stringify(bids));
     socket.on('close', () => console.log('Connection dropped!'));
 });
 

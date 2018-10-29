@@ -1,21 +1,21 @@
 require('../../app');
 const assert = require('chai').assert;
-const supertest = require('supertest');A
+const client = require('socket.io-client');
 const config = require('../../config/config');
 const db = require('../../db');
 const token = require('../helpers/credentials');
 const factory = require('../helpers/factory');
-const client = require('../helpers/socket');
 const User = require('../../models/user');
 const Lot = require('../../models/lot');
+const Bid = require('../../models/bid');
+const rp = require('request-promise');
 
-const server = supertest.agent(`http://localhost:${config.port}`);
 
-describe('Realtime bids processing', () => {
+describe('Bids realtime processing', () => {
 
     let user, lot, jwt;
 
-    before(async () => {
+    beforeEach(async () => {
         user = await factory.build('user');
         await User.create(user);
         lot = await factory.build('lot');
@@ -25,21 +25,63 @@ describe('Realtime bids processing', () => {
 
     after(() => db.clean());
 
-    describe('Existed bids list', () => {
-        it('should show all previously created bids', (done) => {
-            factory.build('bid').then((bid) => {
-                bid.lot = lot._id;
-                bid.createdAt = new Date();
-                server
-                .post('/api/bids/create')
-                .set({ Authorization: jwt })
-                .send(bid)
-                .expect(200)
-                .end(() => {
-                    client(lot._id.toString(), (data) => {
-                        assert.isTrue(JSON.parse(data).length === 1);
-                        done();
-                    });
+    it('should show existed bids', (done) => {
+        const socket = client(`http://localhost:${config.port}`, { query: `lot=${lot._id.toString()}` });
+        factory.build('bid').then((bid) => {
+            bid.lot = lot._id.toString();
+            bid.user = '5bd6f6b5c09d1737b801e6d1';
+            bid.createdAt = new Date();
+
+            Bid.create(bid, (err) => {
+                if (err) throw err;
+                socket.on('open', (data) => {
+                    const actual = JSON.parse(data);
+                    assert.isTrue(actual.length === 1);
+                    done();
+                });
+            });
+        });
+    });
+
+    it('should show newly created bid', (done) => {
+        const socket = client(`http://localhost:${config.port}`, { query: `lot=${lot._id.toString()}` });
+        factory.build('bid').then((bid) => {
+            bid.lot = lot._id.toString();
+            bid.createdAt = new Date();
+
+            socket.on('bid', (data) => {
+                const actual = JSON.parse(data);
+                assert.equal(actual.lot, bid.lot);
+                assert.equal(actual.price, bid.price);
+                done();
+            });
+
+            const options = {
+                method: 'POST',
+                uri: `http://localhost:${config.port}/api/bids/create`,
+                body: bid,
+                json: true,
+                headers: {
+                    Authorization: jwt
+                }
+            };
+            rp(options);
+        });
+    });
+
+    it('should show only bids that belong to specific lot', (done) => {
+        const socket = client(`http://localhost:${config.port}`, { query: `lot=${lot._id.toString()}` });
+        factory.build('bid').then((bid) => {
+            bid.lot = '5bd6f6b5c09d1737b801e6d1';
+            bid.user = '5bd6f6dac09d1737b801e6d2';
+            bid.createdAt = new Date();
+
+            Bid.create(bid, (err) => {
+                if (err) throw err;
+                socket.on('open', (data) => {
+                    const actual = JSON.parse(data);
+                    assert.isTrue(actual.length === 0);
+                    done();
                 });
             });
         });
