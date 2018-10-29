@@ -9,6 +9,7 @@ const auth = require('./middlewares/auth');
 const userRoutes = require('./routes/user');
 const lotRoutes = require('./routes/lot');
 const bidRoutes = require('./routes/bid');
+const Bid = require('./models/bid');
 const config = require('./config/config');
 
 const app = express();
@@ -34,9 +35,11 @@ app.use('/api/user', userRoutes);
 app.use('/api/lots', lotRoutes);
 app.use('/api/bids', bidRoutes);
 
-io.on('connection', function(socket) {
+io.on('connection', async function(socket) {
     const lot = url.parse(socket.handshake.url, true).query.lot;
     socket.join(lot);
+    const bids = await Bid.find({ lot }).exec();
+    io.to(lot).emit('bid', JSON.stringify(bids));
     socket.on('close', () => console.log('Connection dropped!'));
 });
 
