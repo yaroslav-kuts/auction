@@ -8,6 +8,7 @@ const create = async function(req, res) {
 
   if (!!lot && lot.user.toString() === req.user.id) return res.status(405).json({ message: 'Bid creation for own lot not allowed'});
   await Bid.create(bid);
+  req.io.to(bid.lot).emit('bid', JSON.stringify(bid));
   return res.json(bid);
 };
 
