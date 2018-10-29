@@ -9,6 +9,7 @@ const auth = require('./middlewares/auth');
 const userRoutes = require('./routes/user');
 const lotRoutes = require('./routes/lot');
 const bidRoutes = require('./routes/bid');
+const orderRoutes = require('./routes/order');
 const Bid = require('./models/bid');
 const config = require('./config/config');
 
@@ -34,6 +35,7 @@ app.get('/api/healthcheck', (req, res) => res.json({ status: 'OK' }));
 app.use('/api/user', userRoutes);
 app.use('/api/lots', lotRoutes);
 app.use('/api/bids', bidRoutes);
+app.use('/api/orders', orderRoutes);
 
 io.on('connection', async function(socket) {
     const lot = url.parse(socket.handshake.url, true).query.lot;
